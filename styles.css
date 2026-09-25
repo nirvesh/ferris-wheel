@@ -1,0 +1,363 @@
+/* ============================================================
+   Animated Carnival — scene built around the Ferris wheel.
+   The wheel / line / cabin structure is preserved so the
+   fCC project still passes; everything else is scenery.
+   The whole mount is sized off --wheel-size so wheel, legs,
+   hub and base stay aligned at every screen size.
+   ============================================================ */
+
+:root {
+  --wheel-size: min(58vw, 380px);
+  --rim: #ffd76a;
+  --gold: #d99b23;
+  --gold-dark: #7a561a;
+
+  /* skin tones */
+  --skin-l: #f2cfa8;
+  --skin-m: #b5713f;
+  --skin-d: #5f3a1f;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(180deg,
+      #140d33 0%, #2b1a54 32%, #5b2668 58%, #a83c69 80%, #e07a6b 100%);
+  font-family: system-ui, sans-serif;
+}
+
+/* ---- Moon ------------------------------------------------ */
+.moon {
+  position: absolute;
+  top: 7%;
+  right: 11%;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, #fffef2, #ecebd3 70%, #d9d7ba);
+  box-shadow: 0 0 44px 10px rgba(255, 255, 220, 0.35);
+}
+
+/* ---- Stars ----------------------------------------------- */
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fffbe8;
+  opacity: 0.85;
+  animation: twinkle 2.6s ease-in-out infinite;
+}
+.star:nth-child(2)  { top: 8%;  left: 12%; }
+.star:nth-child(3)  { top: 14%; left: 30%; animation-delay: .3s; }
+.star:nth-child(4)  { top: 6%;  left: 52%; animation-delay: .7s; }
+.star:nth-child(5)  { top: 18%; left: 68%; animation-delay: 1.1s; }
+.star:nth-child(6)  { top: 10%; left: 82%; animation-delay: .5s; }
+.star:nth-child(7)  { top: 22%; left: 20%; animation-delay: 1.4s; }
+.star:nth-child(8)  { top: 26%; left: 44%; animation-delay: .9s; }
+.star:nth-child(9)  { top: 30%; left: 88%; animation-delay: .2s; }
+.star:nth-child(10) { top: 5%;  left: 40%; animation-delay: 1.7s; }
+.star:nth-child(11) { top: 16%; left: 92%; animation-delay: .6s; }
+.star:nth-child(12) { top: 24%; left: 60%; animation-delay: 1.2s; }
+.star:nth-child(13) { top: 12%; left: 72%; animation-delay: 2s; }
+.star:nth-child(14) { top: 20%; left: 8%;  animation-delay: 1s; }
+.star:nth-child(15) { top: 28%; left: 76%; animation-delay: .4s; }
+
+/* ---- Big-top tent ---------------------------------------- */
+.tent {
+  position: absolute;
+  bottom: 15%;
+  left: 4%;
+  width: 250px;
+  height: 190px;
+  z-index: 2;
+}
+.tent__top {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, #e63946 0 28px, #f6efe0 28px 56px);
+  clip-path: polygon(0% 100%, 0% 46%, 50% 0%, 100% 46%, 100% 100%);
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
+}
+.tent__top::before {        /* doorway */
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 66px;
+  background: #3a1220;
+  border-radius: 25px 25px 0 0;
+}
+.flag {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  width: 26px;
+  height: 18px;
+  background: #ffd76a;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transform-origin: left center;
+  animation: flutter 1.9s ease-in-out infinite;
+}
+.flag::before {             /* flagpole on the LEFT */
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -8px;
+  width: 3px;
+  height: 34px;
+  background: #f6efe0;
+}
+
+/* ---- Ground ---------------------------------------------- */
+.ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 15%;
+  background: linear-gradient(180deg, #3a2e1a, #221a0e);
+  box-shadow: inset 0 3px 0 rgba(255, 215, 106, 0.15);
+  z-index: 1;
+}
+
+/* ============================================================
+   FERRIS WHEEL + MOUNT  (wrapper is taller than the wheel to
+   leave room for legs/base below; everything in wheel units)
+   ============================================================ */
+.ferris {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;                                   /* sits on the ground */
+  width: var(--wheel-size);
+  height: calc(var(--wheel-size) * 1.34);        /* wheel + mount space */
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.base {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(var(--wheel-size) * 0.62);
+  height: 12px;
+  background: var(--gold-dark);
+  border-radius: 6px;
+  z-index: 0;
+}
+
+.leg {
+  position: absolute;
+  top: calc(var(--wheel-size) * 0.5);            /* start at the hub */
+  left: 50%;
+  width: 11px;
+  height: calc(var(--wheel-size) * 0.94);        /* long enough to reach the base */
+  background: linear-gradient(var(--gold), var(--gold-dark));
+  border-radius: 6px;
+  transform-origin: top center;
+  z-index: 0;
+}
+.leg--l { transform: translateX(-50%) rotate(21deg); }
+.leg--r { transform: translateX(-50%) rotate(-21deg); }
+
+/* the rotating wheel (unchanged mechanics) */
+.wheel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--wheel-size);
+  height: var(--wheel-size);
+  border: 6px solid var(--rim);
+  border-radius: 50%;
+  box-shadow: 0 0 16px rgba(255, 215, 106, 0.55),
+              inset 0 0 16px rgba(255, 215, 106, 0.3);
+  z-index: 1;
+  animation: wheel 10s linear infinite;
+}
+
+.line {
+  background: linear-gradient(90deg,
+      rgba(255, 215, 106, 0.95), rgba(255, 215, 106, 0.3));
+  width: 50%;
+  height: 3px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0% 0%;
+}
+.line:nth-of-type(2) { transform: rotate(60deg); }
+.line:nth-of-type(3) { transform: rotate(120deg); }
+.line:nth-of-type(4) { transform: rotate(180deg); }
+.line:nth-of-type(5) { transform: rotate(240deg); }
+.line:nth-of-type(6) { transform: rotate(300deg); }
+
+/* gondolas */
+.cabin {
+  width: 19%;
+  height: 16%;
+  position: absolute;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  border-radius: 6px 6px 9px 9px;
+  transform-origin: 50% 0%;
+  animation: cabins 10s linear infinite;
+  overflow: hidden;
+}
+.cabin::before {           /* roof */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  width: 104%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  transform: translateX(-50%);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  z-index: 4;
+}
+.cabin::after {            /* hanger */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -16px;
+  width: 2px;
+  height: 9px;
+  background: var(--gold-dark);
+  transform: translateX(-50%);
+  z-index: 4;
+}
+
+.cabin:nth-of-type(1) { right: -8.5%; top: 50%;   background: #e63946; }
+.cabin:nth-of-type(2) { right: 17%;   top: 93.5%; background: #f4a261; }
+.cabin:nth-of-type(3) { right: 67%;   top: 93.5%; background: #2a9d8f; }
+.cabin:nth-of-type(4) { left: -8.5%;  top: 50%;   background: #4d80c0; }
+.cabin:nth-of-type(5) { left: 17%;    top: 7%;    background: #e9c46a; }
+.cabin:nth-of-type(6) { right: 17%;   top: 7%;    background: #c44f9b; }
+
+/* ---- Kids seated inside the gondolas --------------------- */
+.kid {                     /* head */
+  position: absolute;
+  top: 12%;
+  width: 22%;
+  height: 30%;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.22);   /* keeps the head defined on any car color */
+  z-index: 2;
+}
+.kid::before {             /* shoulders */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 72%;
+  transform: translateX(-50%);
+  width: 185%;
+  height: 120%;
+  border-radius: 45% 45% 30% 30%;
+}
+.kid:nth-child(1) { left: 19%; }
+.kid:nth-child(2) { right: 19%; }
+.kid:nth-child(1)::before { background: #f6efe0; }   /* cream shirt */
+.kid:nth-child(2)::before { background: #33334d; }   /* navy shirt */
+
+/* per-car skin tones — a mix of matching and mixed pairs,
+   each chosen to contrast with its car color */
+.cabin:nth-of-type(1) .kid:nth-child(1) { background: var(--skin-l); }  /* red: mixed */
+.cabin:nth-of-type(1) .kid:nth-child(2) { background: var(--skin-d); }
+.cabin:nth-of-type(2) .kid:nth-child(1) { background: var(--skin-d); }  /* orange: dark + medium */
+.cabin:nth-of-type(2) .kid:nth-child(2) { background: var(--skin-m); }
+.cabin:nth-of-type(3) .kid:nth-child(1) { background: var(--skin-l); }  /* teal: both light */
+.cabin:nth-of-type(3) .kid:nth-child(2) { background: var(--skin-l); }
+.cabin:nth-of-type(4) .kid:nth-child(1) { background: var(--skin-d); }  /* blue: both dark */
+.cabin:nth-of-type(4) .kid:nth-child(2) { background: var(--skin-d); }
+.cabin:nth-of-type(5) .kid:nth-child(1) { background: var(--skin-d); }  /* yellow: both dark */
+.cabin:nth-of-type(5) .kid:nth-child(2) { background: var(--skin-d); }
+.cabin:nth-of-type(6) .kid:nth-child(1) { background: var(--skin-l); }  /* magenta: mixed */
+.cabin:nth-of-type(6) .kid:nth-child(2) { background: var(--skin-m); }
+
+.car-front {               /* opaque front wall of the car */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50%;
+  background: inherit;
+  border-top: 2px solid rgba(0, 0, 0, 0.28);
+  box-shadow: inset 0 5px 7px rgba(0, 0, 0, 0.18);
+  z-index: 3;
+}
+
+/* center hub */
+.hub {
+  position: absolute;
+  top: calc(var(--wheel-size) * 0.5);
+  left: 50%;
+  width: calc(var(--wheel-size) * 0.09);
+  height: calc(var(--wheel-size) * 0.09);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff3c4, var(--gold));
+  border: 2px solid var(--gold-dark);
+  z-index: 5;
+}
+
+/* rim bulbs (behind the wheel so cabins cover them) */
+.light-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--wheel-size);
+  height: var(--wheel-size);
+  z-index: 0;
+  pointer-events: none;
+}
+.bulb {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffe08a;
+  box-shadow: 0 0 8px 2px rgba(255, 224, 138, 0.85);
+  transform: translate(-50%, -50%);
+  animation: twinkle 1.6s ease-in-out infinite;
+}
+.bulb:nth-child(1)  { top: 50%;   left: 98%; }
+.bulb:nth-child(2)  { top: 26%;   left: 91.6%; animation-delay: .15s; }
+.bulb:nth-child(3)  { top: 8.4%;  left: 74%;   animation-delay: .3s; }
+.bulb:nth-child(4)  { top: 2%;    left: 50%;   animation-delay: .45s; }
+.bulb:nth-child(5)  { top: 8.4%;  left: 26%;   animation-delay: .6s; }
+.bulb:nth-child(6)  { top: 26%;   left: 8.4%;  animation-delay: .75s; }
+.bulb:nth-child(7)  { top: 50%;   left: 2%;    animation-delay: .9s; }
+.bulb:nth-child(8)  { top: 74%;   left: 8.4%;  animation-delay: 1.05s; }
+.bulb:nth-child(9)  { top: 91.6%; left: 26%;   animation-delay: 1.2s; }
+.bulb:nth-child(10) { top: 98%;   left: 50%;   animation-delay: 1.35s; }
+.bulb:nth-child(11) { top: 91.6%; left: 74%;   animation-delay: 1.5s; }
+.bulb:nth-child(12) { top: 74%;   left: 91.6%; animation-delay: 1.65s; }
+
+/* ---- Keyframes ------------------------------------------- */
+@keyframes wheel {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes cabins {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+@keyframes flutter {
+  0%, 100% { transform: rotate(0deg) scaleX(1); }
+  50%      { transform: rotate(5deg) scaleX(0.85); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wheel, .cabin, .star, .bulb, .flag { animation: none; }
+}
